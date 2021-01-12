@@ -15,6 +15,5 @@ def get_stock_data(ticker, start=START, now=NOW):
         df = pdr.get_data_yahoo(ticker, start, now)
         current_price = round(df['Close'][-1], 2)
         return df, current_price
-    except Exception as e:
-        logger.error(str(e))
+    except Exception:
         raise Exception('Data not found')

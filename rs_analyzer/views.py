@@ -1,33 +1,60 @@
 from django.http import HttpResponse
 from .resistance import Resistance
 from .support import Support
-from .world.gateway import get_stock_data
 from django.http import JsonResponse
 from logger import logger
+from rest_framework.decorators import api_view
+import json
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
-def support(request, ticker):
-    ticker = ticker.upper()
-    analyzer = Support()
-    try:
-        df, current_price = get_stock_data(ticker)
-        data = analyzer.analyze(ticker, df, current_price)
-    except Exception as e:
-        data = {'Error': str(e)}
-    return JsonResponse(data)
+class SupportView(APIView):
+    def get(self, request, ticker):
+        ticker = ticker.upper()
+        analyzer = Support()
+        try:
+            data = analyzer.analyze(ticker)
+        except Exception as e:
+            data = {'Error': str(e)}
+        return Response(data)
+
+    def post(self, request):
+        received_json_data = json.loads(request.body.decode("utf-8"))
+        tickers = received_json_data['tickers'].split(',')
+        analyzer = Support()
+        data = analyzer.analyze_many(tickers)
+        return Response(data)
+
+    def handle_exception(self, exc):
+        return Response({'Error': str(exc)})
 
 
-def resistance(request, ticker):
-    ticker = ticker.upper()
-    analyzer = Resistance()
-    try:
-        df, current_price = get_stock_data(ticker)
-        data = analyzer.analyze(ticker, df, current_price)
-    except Exception as e:
-        logger.error(str(e))
-        data = {'Error': str(e)}
-    return JsonResponse(data)
+class ResistanceView(APIView):
+    def handle_exception(self, exc):
+        return Response({'Error': str(exc)})
+
+    def get(self, request, ticker):
+        ticker = ticker.upper()
+        analyzer = Resistance()
+        try:
+            data = analyzer.analyze(ticker)
+        except Exception as e:
+            logger.error(str(e))
+            data = {'Error': str(e)}
+        return Response(data)
+
+    def post(self, request):
+        received_json_data = json.loads(request.body.decode("utf-8"))
+        tickers = received_json_data['tickers'].split(',')
+        analyzer = Resistance()
+        data = analyzer.analyze_many(tickers)
+        return Response(data)
 
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+class IndexView(APIView):
+    def get(self, request):
+        return Response("Hello, world. You're at the polls index.")
+
+    def handle_exception(self, exc):
+        return Response({'Error': str(exc)})
