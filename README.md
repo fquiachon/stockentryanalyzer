@@ -7,18 +7,25 @@ stock-entry-analyzer, Is a Stock Market web API that aims to automate analysis o
 ## Pre Setup
 ### Development Setup
 <p>Create a new Python 3.x virtual environment</p>
-* Setup python environment
+I. Setup python environment
 
-`python3 -m venv env`
+1. Create a python virtual environment
 
-* Python Libraries
+    `$ python3 -m venv env`
+2. Activate virtual environment 
+
+    `$ <project-dir>\env\Scripts\activate`
+    
+3. Install the python modules listed in `requirements.txt`
+  * Python Libraries
     * django==3.1.2
     * yfinance==0.1.15
     * pandas==1.1.3
     * pandas-datareader==0.9.0
     * djangorestframework==3.12.2
 
-    
+    `$ pip install -r requirements.txt`
+
 ### Database Setup
 see project's `settings.py`
 ```
