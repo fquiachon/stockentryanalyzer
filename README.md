@@ -42,20 +42,20 @@ https://`<host>`:`<port>`/v1/<API Endpoints>
 
 ### Stock Market Tickers
 #### GET /support/<str:ticker> 200
-![Alt text](docs/get_support.jpg)
+![Alt text](docs/get_support.JPG)
 
 #### GET /resistance/<str:ticker> 200
-![Alt text](docs/get_resistance.jpg)
+![Alt text](docs/get_resistance.JPG)
 
 #### POST /support 201
-![Alt text](docs/post_support.jpg)
+![Alt text](docs/post_support.JPG)
 
 #### POST /resistance 200
-![Alt text](docs/post_resistance.jpg)
+![Alt text](docs/post_resistance.JPG)
 
 ## Execution
 1. Run django app using command:
 
     `python manage.py runserver`
-![Alt text](docs/home.jpg)
+![Alt text](docs/home.JPG)
 
