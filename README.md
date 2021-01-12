@@ -16,6 +16,7 @@ stock-entry-analyzer, Is a Stock Market web API that aims to automate analysis o
     * yfinance==0.1.15
     * pandas==1.1.3
     * pandas-datareader==0.9.0
+    * djangorestframework==3.12.2
 
     
 ### Database Setup
@@ -31,15 +32,15 @@ DATABASES = {
 
 
 ## Endpoints
-https://<host>:<port>/v1/<API Endpoints>
+https://`<host>`:`<port>`/v1/<API Endpoints>
 
 ### Stock Market Tickers
 
-#### GET /v1/support/<str:ticker> 200
+#### GET /support/<str:ticker> 200
 
-#### GET /v1/resistance/<str:ticker> 200
+#### GET /resistance/<str:ticker> 200
 
-#### POST /v1/support 201
+#### POST /support 201
 
 request body:
   
@@ -83,7 +84,7 @@ response body:
 }
 ```
 
-#### POST /v1/resistance 200
+#### POST /resistance 200
 
 request body:
   
