@@ -2,7 +2,7 @@
 stock-entry-analyzer, Is a Stock Market web API that aims to automate analysis of the stock market price resistance ans support based on available historical data. 
 
 ## Technology Stack
-![Alt text](docs/stacj.jpg)
+![Alt text](docs/stack.jpg)
 
 ## Pre Setup
 ### Development Setup
