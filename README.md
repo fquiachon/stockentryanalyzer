@@ -1,13 +1,12 @@
 # stock-entry-analyzer
-stock-entry-analyzer, Is a Stock Market web API that aims to automate analysis of the stock market price resistance ans support based on available historical data. 
+<p>stock-entry-analyzer, Is a Stock Market web API that aims to automate analysis of the stock market price resistance and support based on available historical data. </p>
 
 ## Technology Stack
 ![Alt text](docs/stack.jpg)
 
-## Pre Setup
-### Development Setup
-<p>Create a new Python 3.x virtual environment</p>
-I. Setup python environment
+## Development
+### Virtual environment
+<p> Setup python environment </p>
 
 1. Create a python virtual environment
 
@@ -38,98 +37,25 @@ DATABASES = {
 ```
 
 
-## Endpoints
+## API Endpoints
 https://`<host>`:`<port>`/v1/<API Endpoints>
 
 ### Stock Market Tickers
-
 #### GET /support/<str:ticker> 200
+![Alt text](docs/get_support.jpg)
 
 #### GET /resistance/<str:ticker> 200
+![Alt text](docs/get_resistance.jpg)
 
 #### POST /support 201
-
-request body:
-  
-  `{
-	"tickers": "TSLA,FB"
-  }`
-  
-response body:
-  
-```
-{
-  "TSLA": {
-    "current_price": 811.19,
-    "current_date": "2021-01-11T00:00:00",
-    "S1": {
-      "date": "2020-12-10 00:00:00",
-      "price": 566.34,
-      "diff %": 30.18
-    },
-    "S2": {
-      "date": "2020-10-06 00:00:00",
-      "price": 406.05,
-      "diff %": 49.94
-    }
-  },
-  "Status": "3/3 Completed",
-  "FB": {
-    "current_price": 256.84,
-    "current_date": "2021-01-11T00:00:00",
-    "S1": {
-      "date": "2020-10-07 00:00:00",
-      "price": 254.82,
-      "diff %": 0.79
-    },
-    "S2": {
-      "date": "2020-09-21 00:00:00",
-      "price": 244.13,
-      "diff %": 4.95
-    }
-  }
-}
-```
+![Alt text](docs/post_support.jpg)
 
 #### POST /resistance 200
-
-request body:
-  
-  `{
-	"tickers": "TSLA,FB"
-  }`
-  
-response body:
-  
-```
-{
-  "TSLA": {
-    "current_price": 811.19,
-    "current_date": "2021-01-11T00:00:00",
-    "R1": "No resistance",
-    "R2": "No resistance"
-  },
-  "Status": "2/2 Completed",
-  "FB": {
-    "current_price": 256.84,
-    "current_date": "2021-01-11T00:00:00",
-    "R1": {
-      "date": "2020-10-01 00:00:00",
-      "price": 268.33,
-      "diff %": 4.28
-    },
-    "R2": {
-      "date": "2020-08-07 00:00:00",
-      "price": 278.89,
-      "diff %": 7.91
-    }
-  }
-}
-```
+![Alt text](docs/post_resistance.jpg)
 
 ## Execution
 1. Run django app using command:
 
     `python manage.py runserver`
-
+![Alt text](docs/home.jpg)
 

@@ -1,12 +1,10 @@
-from django.http import HttpResponse
 from .resistance import Resistance
 from .support import Support
-from django.http import JsonResponse
 from logger import logger
-from rest_framework.decorators import api_view
 import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.utils.html import format_html
 
 
 class SupportView(APIView):
@@ -54,7 +52,7 @@ class ResistanceView(APIView):
 
 class IndexView(APIView):
     def get(self, request):
-        return Response("Hello, world. You're at the polls index.")
+        return Response("Welcome to Stock Entry Analyzer API")
 
     def handle_exception(self, exc):
         return Response({'Error': str(exc)})
