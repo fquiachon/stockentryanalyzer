@@ -1,23 +1,29 @@
 from logger import logger
 from .difference import calculate
-from .gateway.yfinance_api import get_stock_data
+from rs_analyzer.models import Support as SM
 
 
 class Support:
 
     def __init__(self):
-        self.response = {}
+        self.response = []
 
-    def analyze_many(self, tickers):
+    def analyze_many(self, tickers, get_stock_data, market='Global'):
         for idx, ticker in enumerate(tickers):
-            self.response.update(self.analyze(ticker))
-            self.response['Status'] = f'{idx+1}/{len(tickers)} Completed'
-        return self.response
 
-    def analyze(self, ticker):
+            if SM.objects.filter(ticker=ticker, market=market).count() > 0:
+                print(f'SKIP, {ticker} data already existing in {market} market')
+                continue
+            self.analyze(ticker, get_stock_data, market)
+
+    def analyze(self, ticker, get_stock_data, market='Global'):
         ticker = ticker.upper()
+        if SM.objects.filter(ticker=ticker, market=market).count() > 0:
+            print(f'SKIP, {ticker} data already existing in {market} market')
+            return []
         try:
-            df, current_price = get_stock_data(ticker)
+            df = get_stock_data(ticker)
+            current_price = round(df['close'][df.index[-1]], 2)
             support = {}
             support_list = []
             dates = {}
@@ -30,7 +36,7 @@ class Support:
 
             for i in df.index:
                 currentMin = min(Range, default=0)
-                value = round(df["Low"][i], 2)
+                value = round(df["low"][i], 2)
                 Range = Range[1:9]
                 Range.append(value)
                 daterange = daterange[1:9]
@@ -47,7 +53,9 @@ class Support:
                     if lastPivot != 0 and dates != 0:
                         support_list.append(lastPivot)
                         dates[lastPivot] = str(lastDate)
+            support_list = list(dict.fromkeys(support_list))
             support_list.sort(reverse=True)
+            print(support_list)
             for idx in range(len(support_list)):
                 prev_price = support_list[idx]
                 logger.debug(f'{current_price} > {prev_price} : {current_price > prev_price}')
@@ -57,16 +65,37 @@ class Support:
                     break
 
             support['current_price'] = current_price
-            support['current_date'] = df.index[-1]
+            support['current_date'] = f'{df.index[-1]}'.split(' ')[0]
             if s1 > current_price:
-                support['S1'] = "No support"
-                support['S2'] = "No support"
+                support['s1'] = "No support"
+                support['s2'] = "No support"
             else:
                 ps1 = round(calculate(current_price, s1), 2)
                 ps2 = round(calculate(current_price, s2), 2)
-                support['S1'] = {'date': dates[s1], 'price': s1, 'diff %': ps1}
-                support['S2'] = {'date': dates[s2], 'price': s2, 'diff %': ps2}
-            return {ticker: support}
+                support['s1_date'] = dates[s1].split(' ')[0]
+                support['s1_price'] = s1
+                support['s1_diff'] = ps1
+                support['s2_date'] = dates[s2].split(' ')[0]
+                support['s2_price'] = s2
+                support['s2_diff'] = ps2
+                support['ticker'] = ticker
+                support['market'] = market
+                support_entry = SM(
+                    ticker=support['ticker'],
+                    current_price=support['current_price'],
+                    current_date=support['current_date'],
+                    s1_date=support['s1_date'],
+                    s1_price=support['s1_price'],
+                    s1_diff=support['s1_diff'],
+                    s2_date=support['s2_date'],
+                    s2_price=support['s2_price'],
+                    s2_diff=support['s2_diff'],
+                    market=support['market'],
+                )
+                support_entry.save()
+                support['id'] = support_entry.id
+            return [support]
         except Exception as e:
-            return {ticker: str(e)}
+            logger.exception(e)
+            return [str(e)]
 

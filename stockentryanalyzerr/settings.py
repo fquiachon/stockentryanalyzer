@@ -25,9 +25,13 @@ SECRET_KEY = '1om%xixp-ec(-09-8_qc2a=x!g9uj=xs3ayank5tya&cxcr9s&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'kubernetes.docker.internal']
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
+}
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rs_analyzer'
+    'rs_analyzer',
+    'sslserver',
 ]
 
 MIDDLEWARE = [

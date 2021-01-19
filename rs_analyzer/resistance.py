@@ -1,23 +1,23 @@
 from logger import logger
 from .difference import calculate
-from .gateway.yfinance_api import get_stock_data
 
 
 class Resistance:
 
     def __init__(self):
-        self.response = {}
+        self.response = []
 
-    def analyze_many(self, tickers):
+    def analyze_many(self, tickers, get_stock_data, market='Global'):
         for idx, ticker in enumerate(tickers):
-            self.response.update(self.analyze(ticker))
-            self.response['Status'] = f'{idx+1}/{len(tickers)} Completed'
+            self.response.append(self.analyze(ticker, get_stock_data, market))
+            self.response.append({'Status': f'{idx+1}/{len(tickers)} Completed'})
         return self.response
 
-    def analyze(self, ticker):
+    def analyze(self, ticker, get_stock_data, market='Global'):
         ticker = ticker.upper()
         try:
-            df, current_price = get_stock_data(ticker)
+            df = get_stock_data(ticker)
+            current_price = round(df['close'][-1], 2)
             resistance_summary = {}
             resistance_list = []
             dates = {}
@@ -30,7 +30,7 @@ class Resistance:
 
             for i in df.index:
                 currentMax = max(Range, default=0)
-                value = round(df["High"][i], 2)
+                value = round(df["high"][i], 2)
 
                 Range = Range[1:9]
                 Range.append(value)
@@ -58,17 +58,22 @@ class Resistance:
                     r2 = resistance_list[idx - 2]
                     break
 
+            resistance_summary['id'] = 26
             resistance_summary['current_price'] = current_price
-            resistance_summary['current_date'] = df.index[-1]
+            resistance_summary['current_date'] = f'{df.index[-1]}'.replace('T', ' ')
             if r1 < current_price:
-                resistance_summary['R1'] = "No resistance"
-                resistance_summary['R2'] = "No resistance"
+                resistance_summary['r1'] = "No Resistance"
+                resistance_summary['r2'] = "No Resistance"
             else:
                 pr1 = round(calculate(r1, current_price), 2)
                 pr2 = round(calculate(r2, current_price), 2)
-                resistance_summary['R1'] = {'date': dates[r1], 'price': r1, 'diff %': pr1}
-                resistance_summary['R2'] = {'date': dates[r2], 'price': r2, 'diff %': pr2}
-
-            return {ticker: resistance_summary}
+                resistance_summary['r1_date'] = dates[r1]
+                resistance_summary['r1_price'] = r1
+                resistance_summary['r1_diff'] = pr1
+                resistance_summary['r2_date'] = dates[r2]
+                resistance_summary['r2_price'] = r2
+                resistance_summary['r2_diff'] = pr2
+                resistance_summary['ticker'] = ticker
+            return [resistance_summary]
         except Exception as e:
-            return {ticker: str(e)}
+            return [str(e)]
